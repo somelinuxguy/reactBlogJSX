@@ -1,17 +1,4 @@
-// a constant, a list of posts from some given source.
-const boks = [{
-    "userId": 1,
-    "bokId": 1,
-    "bok": "quia et suscipit suscipit recusandae consequuntur expedita et cum reprehenderit molestiae ut ut quas totam nostrum rerum est autem sunt rem eveniet architecto"
-  },{
-    "userId": 1,
-    "bokId": 2,
-    "bok": "est rerum tempore vitae sequi sint nihil reprehenderit dolor beatae ea dolores neque fugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis qui aperiam non debitis possimus qui neque nisi nulla"
-  },{
-    "userId": 2,
-    "bokId": 9,
-    "bok": "et iusto sed quo iure voluptatem occaecati omnis eligendi aut ad voluptatem doloribus vel accusantium quis pariatur molestiae porro eius odio et labore et velit aut"
-  }];
+const boks = [];
 
 let genID = () => 
     Math.floor(Math.random() * 101009).toString();
@@ -20,13 +7,13 @@ let genID = () =>
 const h = React.createElement;
 
 let BokRow = (props) =>
-    <li> <p>{props.bok.bok}</p></li>
+    <li> <p>{props.bok.content}</p></li>
 
 
 let BokList = (props) => 
     <ul>
         { props.boks.map(bok =>
-            <BokRow bok={bok} key={bok.bokId} />
+            <BokRow bok={bok} key={bok.id} />
         ) }
     </ul>
 
@@ -41,13 +28,14 @@ class BokForm extends React.Component {
         }
     }
     render() {
-        return h('form', {
+        return (
+            h('form', {
             onSubmit: (event) => {
                 event.preventDefault();
                 console.log('Submit!!!!');
                 this.props.addBok(this.state.newBok);
-            },
-            className: "inputForm" },
+            }
+        },
 
             <input type="text" value={this.state.newBok} onChange={
                 (event) =>{
@@ -57,7 +45,8 @@ class BokForm extends React.Component {
 
             <input type="submit"  value="Post" />
         )
-    }
+        )
+    } 
 }
 
 class Homepage extends React.Component {
@@ -67,14 +56,26 @@ class Homepage extends React.Component {
             boks: this.props.boks
         }
     }
+
+    getBoks() {
+        fetch('http://0.tcp.ngrok.io:18229/wassups.json')
+            .then( res => res.json())
+            .then( boks => {
+                this.setState({
+                    boks: boks
+                });
+            });
+        };
+
     render () {
         let addBok = (newBok) => {
             this.setState({
                 boks: this.state.boks.concat([
                     {
                         userId: genID(),
-                        bokId: genID(),
-                        bok: newBok
+                        id: genID(),
+                        user: "kevin",
+                        content: newBok
                     }
                 ])
             })
@@ -82,7 +83,8 @@ class Homepage extends React.Component {
 
         return h('div' , {className: "chicekn"}, 
             <h1 className="chickken">Bok Bok Bgok!</h1>,
-            h('h2', {className: "chieknen"}, 'chicken chicken chicken'),
+            <h2 className="chieknen">chicken chicken chicken</h2>,
+            <button onClick={this.getBoks.bind(this)}>Get things</button>,
             h(BokForm, {addBok: addBok}),
             h(BokList, { boks: this.state.boks})
         );
