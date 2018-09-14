@@ -20,17 +20,16 @@ let genID = () =>
 const h = React.createElement;
 
 let BokRow = (props) =>
-    h('li', {className: "bokRow"}, 
-        h('p',{className: "bokUser"},`User: ${props.bok.userId}`),
-        h('p',{className: "bokContent"}, `Bgok: ${props.bok.bok}`)
-    )
+    <li> <p>{props.bok.bok}</p></li>
 
-let BokList = (props) => {
-    return h('ul', {}, props.boks.map(bok =>
-             h(BokRow, {bok : bok, key: bok.bokId})
-        )
-    )
-}
+
+let BokList = (props) => 
+    <ul>
+        { props.boks.map(bok =>
+            <BokRow bok={bok} key={bok.bokId} />
+        ) }
+    </ul>
+
 
 // an object, with a function in it. {onsubmit, classname: "blah"}
 // careful, this happens a lot in React Code Spaghetti
@@ -49,16 +48,14 @@ class BokForm extends React.Component {
                 this.props.addBok(this.state.newBok);
             },
             className: "inputForm" },
-            h('input', {
-                type: 'text',
-                value: this.state.newBok,
-                onChange: (event) => {
-                    let value = event.target.value;
-                    //console.log(value);
-                    this.setState({ newBok: value});
-                }
-            }),
-            h('input', {type: 'submit', value: 'POST!'})
+
+            <input type="text" value={this.state.newBok} onChange={
+                (event) =>{
+                    this.setState({ newBok: event.target.value})
+                   }
+               }/>,
+
+            <input type="submit"  value="Post" />
         )
     }
 }
@@ -83,11 +80,11 @@ class Homepage extends React.Component {
             })
         }
 
-        return h('div' , {className: "bokList"}, 
-            h('h1', {className: "pageTitle"}, 'Bok Bok Bgok!'),
-            h('h2', {className: "subtitle"}, 'The dissonant screeching of barnyard creatures.'),
+        return h('div' , {className: "chicekn"}, 
+            <h1 className="chickken">Bok Bok Bgok!</h1>,
+            h('h2', {className: "chieknen"}, 'chicken chicken chicken'),
             h(BokForm, {addBok: addBok}),
-            h(BokList, { boks: this.state.boks.reverse()})
+            h(BokList, { boks: this.state.boks})
         );
     }
 }
